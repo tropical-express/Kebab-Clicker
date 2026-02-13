@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kabob Emoji Clicker Deluxe</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+    background: #fff8e7;
+  }
+  #kabob {
+    font-size: 100px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  #kabob:active {
+    transform: scale(1.2);
+  }
+  #score {
+    font-size: 30px;
+    margin-top: 20px;
+  }
+  .upgrade {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Kabob Emoji Clicker 🍢</h1>
+<div id="kabob">🍢</div>
+<div id="score">Kabobs: 0</div>
+
+<h2>Upgrades</h2>
+<button class="upgrade" id="helper">Hire Helper (+1/sec) – Cost: 50</button>
+<button class="upgrade" id="betterGrill">Better Grill (+1 per click) – Cost: 100</button>
+<button class="upgrade" id="spicySkewer">Spicy Skewer (+2 per click) – Cost: 250</button>
+<button class="upgrade" id="rareIngredients">Rare Ingredients (+5 per click) – Cost: 500</button>
+<button class="upgrade" id="megaCombo">Mega Combo (x2 click multiplier) – Cost: 1000</button>
+
+<script>
+let score = 0;
+let clickValue = 1;
+let autoClickers = 0;
+let clickMultiplier = 1;
+
+const kabob = document.getElementById('kabob');
+const scoreDisplay = document.getElementById('score');
+
+const upgrades = {
+  helper: { cost: 50, owned: 0, effect: () => { autoClickers++; } },
+  betterGrill: { cost: 100, owned: 0, effect: () => { clickValue += 1; } },
+  spicySkewer: { cost: 250, owned: 0, effect: () => { clickValue += 2; } },
+  rareIngredients: { cost: 500, owned: 0, effect: () => { clickValue += 5; } },
+  megaCombo: { cost: 1000, owned: 0, effect: () => { clickMultiplier *= 2; } }
+};
+
+// Click kabob
+kabob.addEventListener('click', () => {
+  score += clickValue * clickMultiplier;
+  scoreDisplay.textContent = `Kabobs: ${score}`;
+  kabob.textContent = ['🍢','🥩','🌶️','🥒'][Math.floor(Math.random()*4)]; // random kabob emoji for fun
+});
+
+// Upgrade buttons
+for (let key in upgrades) {
+  const btn = document.getElementById(key);
+  btn.addEventListener('click', () => {
+    if(score >= upgrades[key].cost){
+      score -= upgrades[key].cost;
+      upgrades[key].owned++;
+      upgrades[key].effect();
+      scoreDisplay.textContent = `Kabobs: ${score}`;
+      btn.textContent = `${btn.textContent.split('–')[0]}– Owned: ${upgrades[key].owned}`;
+    }
+  });
+}
+
+// Auto-clickers
+setInterval(() => {
+  if(autoClickers > 0){
+    score += autoClickers * clickMultiplier;
+    scoreDisplay.textContent = `Kabobs: ${score}`;
+  }
+}, 1000);
+
+</script>
+
+</body>
+</html>
